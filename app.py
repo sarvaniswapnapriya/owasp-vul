@@ -24,9 +24,9 @@ def create_db():
     
     if count == 0:
         cursor.execute("INSERT INTO users (username, password, balance, bank_account) VALUES (?, ?, ?, ?)", 
-                       ('user1', hashlib.md5("user1password".encode()).hexdigest(), "5000", "123-456-7890"))
+                       ('user1', hashlib.md5("user123".encode()).hexdigest(), "5000", "123-456-7890"))
         cursor.execute("INSERT INTO users (username, password, balance, bank_account) VALUES (?, ?, ?, ?)", 
-                       ('user2', hashlib.md5("user2password".encode()).hexdigest(), "3000", "987-654-3210"))
+                       ('user2', hashlib.md5("user234".encode()).hexdigest(), "3000", "987-654-3210"))
         cursor.execute("INSERT INTO users (username, password, balance, bank_account) VALUES (?, ?, ?, ?)", 
                        ('admin', hashlib.md5("admin123".encode()).hexdigest(), "1000000", "111-222-3333"))
         conn.commit()
