@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import sqlite3
 import hashlib
+import time
 
 app = Flask(__name__)
 app.config.from_object('config')
 
 users_db = {
-    "user1": {"password": hashlib.md5("user123".encode()).hexdigest(), "balance": "5000", "bank_account": "123-456-7890"},
-    "user2": {"password": hashlib.md5("user234".encode()).hexdigest(), "balance": "3000", "bank_account": "987-654-3210"},
+    "user1": {"password": hashlib.md5("user1password".encode()).hexdigest(), "balance": "5000", "bank_account": "123-456-7890"},
+    "user2": {"password": hashlib.md5("user2password".encode()).hexdigest(), "balance": "3000", "bank_account": "987-654-3210"},
     "admin": {"password": hashlib.md5("admin123".encode()).hexdigest(), "balance": "1000000", "bank_account": "111-222-3333"}
 }
 
@@ -17,19 +18,7 @@ def get_db():
 def create_db():
     conn = get_db()
     conn.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, balance TEXT, bank_account TEXT)')
-    
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM users")
-    count = cursor.fetchone()[0]
-    
-    if count == 0:
-        cursor.execute("INSERT INTO users (username, password, balance, bank_account) VALUES (?, ?, ?, ?)", 
-                       ('user1', hashlib.md5("user1password".encode()).hexdigest(), "5000", "123-456-7890"))
-        cursor.execute("INSERT INTO users (username, password, balance, bank_account) VALUES (?, ?, ?, ?)", 
-                       ('user2', hashlib.md5("user2password".encode()).hexdigest(), "3000", "987-654-3210"))
-        cursor.execute("INSERT INTO users (username, password, balance, bank_account) VALUES (?, ?, ?, ?)", 
-                       ('admin', hashlib.md5("admin123".encode()).hexdigest(), "1000000", "111-222-3333"))
-        conn.commit()
+    conn.commit()
     conn.close()
 
 create_db()
@@ -80,11 +69,7 @@ def admin_dashboard():
         cursor.execute("SELECT * FROM users")
         results = cursor.fetchall()
         conn.close()
-        
-        if results:
-            return render_template("admin_dashboard.html", results=results)
-        else:
-            return "No users found in the database", 404  
+        return render_template("admin_dashboard.html", results=results)
     return redirect(url_for("home"))
 
 @app.route("/search")
@@ -118,4 +103,4 @@ def change_password():
     return "User not found", 404
 
 if __name__ == "__main__":
-    app.run(debug=True) 
+    app.run(debug=True)  
